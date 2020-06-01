@@ -55,7 +55,7 @@ class Two_Factor_Core {
 	 *
 	 * @var array
 	 */
-	private static $password_auth_tokens = array();
+	private static $password_auth_tokens = [];
 
 	/**
 	 * Set up filters and actions.
@@ -65,18 +65,18 @@ class Two_Factor_Core {
 	 * @since 0.1-dev
 	 */
 	public static function add_hooks( $compat ) {
-		add_action( 'plugins_loaded', array( __CLASS__, 'load_textdomain' ) );
-		add_action( 'init', array( __CLASS__, 'get_providers' ) );
-		add_action( 'wp_login', array( __CLASS__, 'wp_login' ), 10, 2 );
-		add_action( 'login_form_validate_2fa', array( __CLASS__, 'login_form_validate_2fa' ) );
-		add_action( 'login_form_backup_2fa', array( __CLASS__, 'backup_2fa' ) );
-		add_action( 'show_user_profile', array( __CLASS__, 'user_two_factor_options' ) );
-		add_action( 'edit_user_profile', array( __CLASS__, 'user_two_factor_options' ) );
-		add_action( 'personal_options_update', array( __CLASS__, 'user_two_factor_options_update' ) );
-		add_action( 'edit_user_profile_update', array( __CLASS__, 'user_two_factor_options_update' ) );
-		add_filter( 'manage_users_columns', array( __CLASS__, 'filter_manage_users_columns' ) );
-		add_filter( 'wpmu_users_columns', array( __CLASS__, 'filter_manage_users_columns' ) );
-		add_filter( 'manage_users_custom_column', array( __CLASS__, 'manage_users_custom_column' ), 10, 3 );
+		add_action( 'plugins_loaded', [ __CLASS__, 'load_textdomain' ] );
+		add_action( 'init', [ __CLASS__, 'get_providers' ] );
+		add_action( 'wp_login', [ __CLASS__, 'wp_login' ], 10, 2 );
+		add_action( 'login_form_validate_2fa', [ __CLASS__, 'login_form_validate_2fa' ] );
+		add_action( 'login_form_backup_2fa', [ __CLASS__, 'backup_2fa' ] );
+		add_action( 'show_user_profile', [ __CLASS__, 'user_two_factor_options' ] );
+		add_action( 'edit_user_profile', [ __CLASS__, 'user_two_factor_options' ] );
+		add_action( 'personal_options_update', [ __CLASS__, 'user_two_factor_options_update' ] );
+		add_action( 'edit_user_profile_update', [ __CLASS__, 'user_two_factor_options_update' ] );
+		add_filter( 'manage_users_columns', [ __CLASS__, 'filter_manage_users_columns' ] );
+		add_filter( 'wpmu_users_columns', [ __CLASS__, 'filter_manage_users_columns' ] );
+		add_filter( 'manage_users_custom_column', [ __CLASS__, 'manage_users_custom_column' ], 10, 3 );
 
 		/**
 		 * Keep track of all the user sessions for which we need to invalidate the
@@ -84,14 +84,14 @@ class Two_Factor_Core {
 		 *
 		 * Is there a better way of doing this?
 		 */
-		add_action( 'set_auth_cookie', array( __CLASS__, 'collect_auth_cookie_tokens' ) );
-		add_action( 'set_logged_in_cookie', array( __CLASS__, 'collect_auth_cookie_tokens' ) );
+		add_action( 'set_auth_cookie', [ __CLASS__, 'collect_auth_cookie_tokens' ] );
+		add_action( 'set_logged_in_cookie', [ __CLASS__, 'collect_auth_cookie_tokens' ] );
 
 		// Run only after the core wp_authenticate_username_password() check.
-		add_filter( 'authenticate', array( __CLASS__, 'filter_authenticate' ), 50 );
+		add_filter( 'authenticate', [ __CLASS__, 'filter_authenticate' ], 50 );
 
-		add_action( 'admin_init', array( __CLASS__, 'trigger_user_settings_action' ) );
-		add_filter( 'two_factor_providers', array( __CLASS__, 'enable_dummy_method_for_debug' ) );
+		add_action( 'admin_init', [ __CLASS__, 'trigger_user_settings_action' ] );
+		add_filter( 'two_factor_providers', [ __CLASS__, 'enable_dummy_method_for_debug' ] );
 
 		$compat->init();
 	}
@@ -113,13 +113,13 @@ class Two_Factor_Core {
 	 * @return array
 	 */
 	public static function get_providers() {
-		$providers = array(
+		$providers = [
 			'Two_Factor_Email'        => TWO_FACTOR_DIR . 'providers/class-two-factor-email.php',
 			'Two_Factor_Totp'         => TWO_FACTOR_DIR . 'providers/class-two-factor-totp.php',
 			'Two_Factor_FIDO_U2F'     => TWO_FACTOR_DIR . 'providers/class-two-factor-fido-u2f.php',
 			'Two_Factor_Backup_Codes' => TWO_FACTOR_DIR . 'providers/class-two-factor-backup-codes.php',
 			'Two_Factor_Dummy'        => TWO_FACTOR_DIR . 'providers/class-two-factor-dummy.php',
-		);
+		];
 
 		/**
 		 * Filter the supplied providers.
@@ -155,7 +155,7 @@ class Two_Factor_Core {
 			 */
 			if ( class_exists( $class ) ) {
 				try {
-					$providers[ $class ] = call_user_func( array( $class, 'get_instance' ) );
+					$providers[ $class ] = call_user_func( [ $class, 'get_instance' ] );
 				} catch ( Exception $e ) {
 					unset( $providers[ $class ] );
 				}
@@ -207,9 +207,9 @@ class Two_Factor_Core {
 		}
 
 		return add_query_arg(
-			array(
+			[
 				'user_id' => intval( $user_id ),
-			),
+			],
 			self_admin_url( $page )
 		);
 	}
@@ -225,9 +225,9 @@ class Two_Factor_Core {
 	public static function get_user_update_action_url( $user_id, $action ) {
 		return wp_nonce_url(
 			add_query_arg(
-				array(
+				[
 					self::USER_SETTINGS_ACTION_QUERY_VAR => $action,
-				),
+				],
 				self::get_user_settings_page_url( $user_id )
 			),
 			sprintf( '%d-%s', $user_id, $action ),
@@ -322,7 +322,7 @@ class Two_Factor_Core {
 		$providers         = self::get_providers();
 		$enabled_providers = get_user_meta( $user->ID, self::ENABLED_PROVIDERS_USER_META_KEY, true );
 		if ( empty( $enabled_providers ) ) {
-			$enabled_providers = array();
+			$enabled_providers = [];
 		}
 		$enabled_providers = array_intersect( $enabled_providers, array_keys( $providers ) );
 
@@ -348,7 +348,7 @@ class Two_Factor_Core {
 
 		$providers            = self::get_providers();
 		$enabled_providers    = self::get_enabled_providers_for_user( $user );
-		$configured_providers = array();
+		$configured_providers = [];
 
 		foreach ( $providers as $classname => $provider ) {
 			if ( in_array( $classname, $enabled_providers, true ) && $provider->is_available_for_user( $user ) ) {
@@ -582,13 +582,13 @@ class Two_Factor_Core {
 		if ( empty( $provider ) ) {
 			$provider = self::get_primary_provider_for_user( $user->ID );
 		} elseif ( is_string( $provider ) && method_exists( $provider, 'get_instance' ) ) {
-			$provider = call_user_func( array( $provider, 'get_instance' ) );
+			$provider = call_user_func( [ $provider, 'get_instance' ] );
 		}
 
 		$provider_class = get_class( $provider );
 
 		$available_providers = self::get_available_providers_for_user( $user );
-		$backup_providers    = array_diff_key( $available_providers, array( $provider_class => null ) );
+		$backup_providers    = array_diff_key( $available_providers, [ $provider_class => null ] );
 		$interim_login       = isset( $_REQUEST['interim-login'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$rememberme = intval( self::rememberme() );
@@ -605,7 +605,7 @@ class Two_Factor_Core {
 		}
 		?>
 
-		<form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( self::login_url( array( 'action' => 'validate_2fa' ), 'login_post' ) ); ?>" method="post" autocomplete="off">
+		<form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( self::login_url( [ 'action' => 'validate_2fa' ], 'login_post' ) ); ?>" method="post" autocomplete="off">
 				<input type="hidden" name="provider"      id="provider"      value="<?php echo esc_attr( $provider_class ); ?>" />
 				<input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
 				<input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
@@ -624,14 +624,14 @@ class Two_Factor_Core {
 			$backup_classname = key( $backup_providers );
 			$backup_provider  = $backup_providers[ $backup_classname ];
 			$login_url        = self::login_url(
-				array(
+				[
 					'action'        => 'backup_2fa',
 					'provider'      => $backup_classname,
 					'wp-auth-id'    => $user->ID,
 					'wp-auth-nonce' => $login_nonce,
 					'redirect_to'   => $redirect_to,
 					'rememberme'    => $rememberme,
-				)
+				]
 			);
 			?>
 			<div class="backup-methods-wrap">
@@ -660,14 +660,14 @@ class Two_Factor_Core {
 					<?php
 					foreach ( $backup_providers as $backup_classname => $backup_provider ) :
 						$login_url = self::login_url(
-							array(
+							[
 								'action'        => 'backup_2fa',
 								'provider'      => $backup_classname,
 								'wp-auth-id'    => $user->ID,
 								'wp-auth-nonce' => $login_nonce,
 								'redirect_to'   => $redirect_to,
 								'rememberme'    => $rememberme,
-							)
+							]
 						);
 						?>
 						<li>
@@ -733,9 +733,9 @@ class Two_Factor_Core {
 	 *
 	 * @return string
 	 */
-	public static function login_url( $params = array(), $scheme = 'login' ) {
+	public static function login_url( $params = [], $scheme = 'login' ) {
 		if ( ! is_array( $params ) ) {
-			$params = array();
+			$params = [];
 		}
 
 		$params = urlencode_deep( $params );
@@ -752,7 +752,7 @@ class Two_Factor_Core {
 	 * @return array
 	 */
 	public static function create_login_nonce( $user_id ) {
-		$login_nonce = array();
+		$login_nonce = [];
 		try {
 			$login_nonce['key'] = bin2hex( random_bytes( 32 ) );
 		} catch ( Exception $ex ) {
@@ -947,7 +947,7 @@ class Two_Factor_Core {
 	 * @param WP_User $user WP_User object of the logged-in user.
 	 */
 	public static function user_two_factor_options( $user ) {
-		wp_enqueue_style( 'user-edit-2fa', plugins_url( 'user-edit.css', __FILE__ ), array(), TWO_FACTOR_VERSION );
+		wp_enqueue_style( 'user-edit-2fa', plugins_url( 'user-edit.css', __FILE__ ), [], TWO_FACTOR_VERSION );
 
 		$enabled_providers = array_keys( self::get_available_providers_for_user( $user ) );
 		$primary_provider  = self::get_primary_provider_for_user( $user->ID );

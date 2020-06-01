@@ -30,13 +30,13 @@ class Two_Factor_FIDO_U2F_Admin {
 	 * @static
 	 */
 	public static function add_hooks() {
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
-		add_action( 'show_user_security_settings', array( __CLASS__, 'show_user_profile' ) );
-		add_action( 'personal_options_update', array( __CLASS__, 'catch_submission' ), 0 );
-		add_action( 'edit_user_profile_update', array( __CLASS__, 'catch_submission' ), 0 );
-		add_action( 'load-profile.php', array( __CLASS__, 'catch_delete_security_key' ) );
-		add_action( 'load-user-edit.php', array( __CLASS__, 'catch_delete_security_key' ) );
-		add_action( 'wp_ajax_inline-save-key', array( __CLASS__, 'wp_ajax_inline_save' ) );
+		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_assets' ] );
+		add_action( 'show_user_security_settings', [ __CLASS__, 'show_user_profile' ] );
+		add_action( 'personal_options_update', [ __CLASS__, 'catch_submission' ], 0 );
+		add_action( 'edit_user_profile_update', [ __CLASS__, 'catch_submission' ], 0 );
+		add_action( 'load-profile.php', [ __CLASS__, 'catch_delete_security_key' ] );
+		add_action( 'load-user-edit.php', [ __CLASS__, 'catch_delete_security_key' ] );
+		add_action( 'wp_ajax_inline-save-key', [ __CLASS__, 'wp_ajax_inline_save' ] );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class Two_Factor_FIDO_U2F_Admin {
 	 * @param string $hook Current page.
 	 */
 	public static function enqueue_assets( $hook ) {
-		if ( ! in_array( $hook, array( 'user-edit.php', 'profile.php' ), true ) ) {
+		if ( ! in_array( $hook, [ 'user-edit.php', 'profile.php' ], true ) ) {
 			return;
 		}
 
@@ -81,7 +81,7 @@ class Two_Factor_FIDO_U2F_Admin {
 		wp_enqueue_script(
 			'fido-u2f-admin',
 			plugins_url( 'js/fido-u2f-admin.js', __FILE__ ),
-			array( 'jquery', 'fido-u2f-api' ),
+			[ 'jquery', 'fido-u2f-api' ],
 			self::asset_version(),
 			true
 		);
@@ -90,16 +90,16 @@ class Two_Factor_FIDO_U2F_Admin {
 		 * Pass a U2F challenge and user data to our scripts
 		 */
 
-		$translation_array = array(
+		$translation_array = [
 			'user_id'  => $user_id,
-			'register' => array(
+			'register' => [
 				'request' => $req,
 				'sigs'    => $sigs,
-			),
-			'text'     => array(
+			],
+			'text'     => [
 				'insert'            => esc_html__( 'Now insert (and tap) your Security Key.', 'two-factor' ),
 				'error'             => esc_html__( 'U2F request failed.', 'two-factor' ),
-				'error_codes'       => array(
+				'error_codes'       => [
 					// Map u2f.ErrorCodes to error messages.
 					0 => esc_html__( 'Request OK.', 'two-factor' ),
 					1 => esc_html__( 'Other U2F error.', 'two-factor' ),
@@ -107,10 +107,10 @@ class Two_Factor_FIDO_U2F_Admin {
 					3 => esc_html__( 'Unsupported U2F configuration.', 'two-factor' ),
 					4 => esc_html__( 'U2F device ineligible.', 'two-factor' ),
 					5 => esc_html__( 'U2F request timeout reached.', 'two-factor' ),
-				),
+				],
 				'u2f_not_supported' => esc_html__( 'FIDO U2F appears to be not supported by your web browser. Try using Google Chrome or Firefox.', 'two-factor' ),
-			),
-		);
+			],
+		];
 
 		wp_localize_script(
 			'fido-u2f-admin',
@@ -125,7 +125,7 @@ class Two_Factor_FIDO_U2F_Admin {
 		wp_enqueue_script(
 			'inline-edit-key',
 			plugins_url( 'js/fido-u2f-admin-inline-edit.js', __FILE__ ),
-			array( 'jquery' ),
+			[ 'jquery' ],
 			self::asset_version(),
 			true
 		);
@@ -133,9 +133,9 @@ class Two_Factor_FIDO_U2F_Admin {
 		wp_localize_script(
 			'inline-edit-key',
 			'inlineEditL10n',
-			array(
+			[
 				'error' => esc_html__( 'Error while saving the changes.', 'two-factor' ),
-			)
+			]
 		);
 	}
 
@@ -250,9 +250,9 @@ class Two_Factor_FIDO_U2F_Admin {
 
 			wp_safe_redirect(
 				add_query_arg(
-					array(
+					[
 						'new_app_pass' => 1,
-					),
+					],
 					wp_get_referer()
 				) . '#security-keys-section'
 			);

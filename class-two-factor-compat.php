@@ -24,7 +24,7 @@ class Two_Factor_Compat {
 		 *
 		 * @see https://wordpress.org/plugins/jetpack/
 		 */
-		add_filter( 'two_factor_rememberme', array( $this, 'jetpack_rememberme' ) );
+		add_filter( 'two_factor_rememberme', [ $this, 'jetpack_rememberme' ] );
 	}
 
 	/**

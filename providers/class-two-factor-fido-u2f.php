@@ -84,12 +84,12 @@ class Two_Factor_FIDO_U2F extends Two_Factor_Provider {
 		wp_register_script(
 			'fido-u2f-login',
 			plugins_url( 'js/fido-u2f-login.js', __FILE__ ),
-			array( 'jquery', 'fido-u2f-api' ),
+			[ 'jquery', 'fido-u2f-api' ],
 			self::asset_version(),
 			true
 		);
 
-		add_action( 'two-factor-user-options-' . __CLASS__, array( $this, 'user_options' ) );
+		add_action( 'two-factor-user-options-' . __CLASS__, [ $this, 'user_options' ] );
 
 		return parent::__construct();
 	}
@@ -173,9 +173,9 @@ class Two_Factor_FIDO_U2F extends Two_Factor_Provider {
 		wp_localize_script(
 			'fido-u2f-login',
 			'u2fL10n',
-			array(
+			[
 				'request' => $data,
-			)
+			]
 		);
 
 		wp_enqueue_script( 'fido-u2f-login' );
@@ -265,12 +265,12 @@ class Two_Factor_FIDO_U2F extends Two_Factor_Provider {
 			return false;
 		}
 
-		$register = array(
+		$register = [
 			'keyHandle'   => $register->keyHandle, // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			'publicKey'   => $register->publicKey, // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			'certificate' => $register->certificate,
 			'counter'     => $register->counter,
-		);
+		];
 
 		$register['name']      = __( 'New Security Key', 'two-factor' );
 		$register['added']     = time();

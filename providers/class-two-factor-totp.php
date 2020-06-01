@@ -48,10 +48,10 @@ class Two_Factor_Totp extends Two_Factor_Provider {
 	 * Class constructor. Sets up hooks, etc.
 	 */
 	protected function __construct() {
-		add_action( 'two-factor-user-options-' . __CLASS__, array( $this, 'user_two_factor_options' ) );
-		add_action( 'personal_options_update', array( $this, 'user_two_factor_options_update' ) );
-		add_action( 'edit_user_profile_update', array( $this, 'user_two_factor_options_update' ) );
-		add_action( 'two_factor_user_settings_action', array( $this, 'user_settings_action' ), 10, 2 );
+		add_action( 'two-factor-user-options-' . __CLASS__, [ $this, 'user_two_factor_options' ] );
+		add_action( 'personal_options_update', [ $this, 'user_two_factor_options_update' ] );
+		add_action( 'edit_user_profile_update', [ $this, 'user_two_factor_options_update' ] );
+		add_action( 'two_factor_user_settings_action', [ $this, 'user_settings_action' ], 10, 2 );
 
 		return parent::__construct();
 	}
@@ -163,8 +163,8 @@ class Two_Factor_Totp extends Two_Factor_Provider {
 	 * @return void
 	 */
 	public function user_two_factor_options_update( $user_id ) {
-		$notices = array();
-		$errors  = array();
+		$notices = [];
+		$errors  = [];
 
 		if ( isset( $_POST['_nonce_user_two_factor_totp_options'] ) ) {
 			check_admin_referer( 'user_two_factor_totp_options', '_nonce_user_two_factor_totp_options' );
@@ -319,7 +319,7 @@ class Two_Factor_Totp extends Two_Factor_Provider {
 
 		// Array of all ticks to allow, sorted using absolute value to test closest match first.
 		$ticks = range( - $max_ticks, $max_ticks );
-		usort( $ticks, array( __CLASS__, 'abssort' ) );
+		usort( $ticks, [ __CLASS__, 'abssort' ] );
 
 		$time = time() / self::DEFAULT_TIME_STEP_SEC;
 

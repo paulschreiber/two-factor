@@ -28,7 +28,7 @@ class Test_ClassTwoFactorCore extends WP_UnitTestCase {
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
 
-		set_error_handler( array( 'Test_ClassTwoFactorCore', 'error_handler' ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
+		set_error_handler( [ 'Test_ClassTwoFactorCore', 'error_handler' ] ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Test_ClassTwoFactorCore extends WP_UnitTestCase {
 	 *
 	 * @return WP_User
 	 */
-	public function get_dummy_user( $meta_key = array( 'Two_Factor_Dummy' => 'Two_Factor_Dummy' ) ) {
+	public function get_dummy_user( $meta_key = [ 'Two_Factor_Dummy' => 'Two_Factor_Dummy' ] ) {
 		$user              = new WP_User( $this->factory->user->create() );
 		$this->old_user_id = get_current_user_id();
 		wp_set_current_user( $user->ID );
@@ -107,21 +107,21 @@ class Test_ClassTwoFactorCore extends WP_UnitTestCase {
 			0,
 			has_action(
 				'init',
-				array( 'Two_Factor_Core', 'get_providers' )
+				[ 'Two_Factor_Core', 'get_providers' ]
 			)
 		);
 		$this->assertGreaterThan(
 			0,
 			has_action(
 				'login_form_validate_2fa',
-				array( 'Two_Factor_Core', 'login_form_validate_2fa' )
+				[ 'Two_Factor_Core', 'login_form_validate_2fa' ]
 			)
 		);
 		$this->assertGreaterThan(
 			0,
 			has_action(
 				'login_form_backup_2fa',
-				array( 'Two_Factor_Core', 'backup_2fa' )
+				[ 'Two_Factor_Core', 'backup_2fa' ]
 			)
 		);
 	}
@@ -259,9 +259,9 @@ class Test_ClassTwoFactorCore extends WP_UnitTestCase {
 		$this->assertContains(
 			'paramencoded=%2F%3D1',
 			Two_Factor_Core::login_url(
-				array(
+				[
 					'paramencoded' => '/=1',
-				)
+				]
 			)
 		);
 	}
@@ -349,10 +349,10 @@ class Test_ClassTwoFactorCore extends WP_UnitTestCase {
 	 */
 	public function test_can_distroy_auth_sessions() {
 		$user_id = $this->factory->user->create(
-			array(
+			[
 				'user_login' => 'username',
 				'user_pass'  => 'password',
-			)
+			]
 		);
 
 		$user = new WP_User( $user_id );
@@ -362,10 +362,10 @@ class Test_ClassTwoFactorCore extends WP_UnitTestCase {
 		$this->assertCount( 0, $session_manager->get_all(), 'No user sessions are present first' );
 
 		$user_authenticated = wp_signon(
-			array(
+			[
 				'user_login'    => 'username',
 				'user_password' => 'password',
-			)
+			]
 		);
 
 		$this->assertEquals( $user_authenticated, $user, 'User can authenticate' );

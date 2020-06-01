@@ -48,9 +48,9 @@ class Two_Factor_Backup_Codes extends Two_Factor_Provider {
 	 * @since 0.1-dev
 	 */
 	protected function __construct() {
-		add_action( 'two-factor-user-options-' . __CLASS__, array( $this, 'user_options' ) );
-		add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-		add_action( 'wp_ajax_two_factor_backup_codes_generate', array( $this, 'ajax_generate_json' ) );
+		add_action( 'two-factor-user-options-' . __CLASS__, [ $this, 'user_options' ] );
+		add_action( 'admin_notices', [ $this, 'admin_notices' ] );
+		add_action( 'wp_ajax_two_factor_backup_codes_generate', [ $this, 'ajax_generate_json' ] );
 
 		return parent::__construct();
 	}
@@ -83,7 +83,7 @@ class Two_Factor_Backup_Codes extends Two_Factor_Provider {
 							__( 'Two-Factor: You are out of backup codes and need to <a href="%s">regenerate!</a>', 'two-factor' ),
 							esc_url( get_edit_user_link( $user->ID ) . '#two-factor-backup-codes' )
 						),
-						array( 'a' => array( 'href' => true ) )
+						[ 'a' => [ 'href' => true ] ]
 					);
 					?>
 				<span>
@@ -204,8 +204,8 @@ class Two_Factor_Backup_Codes extends Two_Factor_Provider {
 	 * @return array
 	 */
 	public function generate_codes( $user, $args = '' ) {
-		$codes        = array();
-		$codes_hashed = array();
+		$codes        = [];
+		$codes_hashed = [];
 
 		// Check for arguments.
 		if ( isset( $args['number'] ) ) {
@@ -244,19 +244,19 @@ class Two_Factor_Backup_Codes extends Two_Factor_Provider {
 		// Setup the return data.
 		$codes = $this->generate_codes( $user );
 		$count = self::codes_remaining_for_user( $user );
-		$i18n  = array(
+		$i18n  = [
 			/* translators: %s: count */
 			'count' => esc_html( sprintf( _n( '%s unused code remaining.', '%s unused codes remaining.', $count, 'two-factor' ), $count ) ),
 			/* translators: %s: the site's domain */
 			'title' => esc_html__( 'Two-Factor Backup Codes for %s', 'two-factor' ),
-		);
+		];
 
 		// Send the response.
 		wp_send_json_success(
-			array(
+			[
 				'codes' => $codes,
 				'i18n'  => $i18n,
-			)
+			]
 		);
 	}
 
