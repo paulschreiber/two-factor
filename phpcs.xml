@@ -7,6 +7,11 @@
 	<rule ref="WordPress-Extra" />
 	<rule ref="WordPress-Docs" />
 
+	<rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+		<severity>0</severity>
+	</rule>
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+
 	<arg name="colors" />
 
 	<arg value="ps" />
